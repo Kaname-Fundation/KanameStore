@@ -1,5 +1,5 @@
 {
-  "name": "terminal-application",
+  "name": "terminal",
   "version": "1.0.0",
   "description": "Terminal Application for KanameOS",
   "main": "dist/main.js",
