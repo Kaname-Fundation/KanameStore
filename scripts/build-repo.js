@@ -25,6 +25,16 @@ async function buildApp(appName) {
   const pkg = require(pkgPath);
   console.log(`Building ${pkg.name} v${pkg.version}...`);
 
+  try {
+    console.log(`  -> Installing dependencies for ${appName}...`);
+    execSync("npm install", { cwd: appPath, stdio: "inherit" });
+    console.log(`  -> Building ${appName}...`);
+    execSync("npm run build", { cwd: appPath, stdio: "inherit" });
+  } catch (error) {
+    console.error(`  -> Failed to build ${appName}:`, error.message);
+    return;
+  }
+
   const zipName = `${pkg.name}-${pkg.version}.wpk`;
   const zipPath = path.join(DIST_DIR, zipName);
   const output = fs.createWriteStream(zipPath);
