@@ -23,7 +23,7 @@ async function buildApp(appName) {
   if (!fs.existsSync(pkgPath)) return;
 
   const pkg = require(pkgPath);
-  console.log(Building  v...);
+  console.log(`Building app: ${pkg.name}...`);
 
   const zipName = ${pkg.name}-.wpk;
   const zipPath = path.join(DIST_DIR, zipName);
