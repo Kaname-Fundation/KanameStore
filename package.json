@@ -1,0 +1,16 @@
+{
+  "name": "kaname-store",
+  "version": "1.0.0",
+  "description": "App Store Registry for KanameOS",
+  "scripts": {
+    "build": "node scripts/build-repo.js"
+  },
+  "dependencies": {
+    "archiver": "^5.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kaname-Fundation/KanameStore.git"
+  },
+  "license": "MIT"
+}
