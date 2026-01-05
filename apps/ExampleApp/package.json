@@ -6,5 +6,8 @@
   "kaname": {
     "category": "Utilities",
     "icon": "icon.png"
+  },
+  "scripts": {
+    "build": "echo 'No build step'"
   }
 }
