@@ -6,8 +6,5 @@
   },
   "icon": "preferences-system",
   "category": "system",
-  "files": [
-    "main.js",
-    "main.css"
-  ]
+  "files": ["main.js", "main.css"]
 }

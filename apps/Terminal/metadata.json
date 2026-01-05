@@ -9,8 +9,5 @@
   },
   "category": "utilities",
   "icon": "utilities-terminal",
-  "files": [
-    "main.js",
-    "main.css"
-  ]
+  "files": ["main.js", "main.css"]
 }
