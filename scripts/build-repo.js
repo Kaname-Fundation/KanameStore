@@ -57,7 +57,12 @@ async function buildApp(appName) {
 
     archive.on("error", (err) => reject(err));
     archive.pipe(output);
-    archive.directory(appPath, false);
+    
+    archive.glob("**/*", {
+      cwd: appPath,
+      ignore: ["node_modules/**", ".git/**", "src/**", "rspack.config.js"],
+    });
+
     archive.finalize();
   });
 }
