@@ -104,6 +104,7 @@ async function buildApp(appName) {
         category: pkg.kaname?.category || metadata.category || "Uncategorized",
         download: zipName,
         icon: iconPath,
+        iconName: metadata.icon || pkg.kaname?.icon,
       });
       resolve();
     });
