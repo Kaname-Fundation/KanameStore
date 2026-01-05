@@ -7,8 +7,13 @@ const APPS_DIR = path.join(__dirname, "../apps");
 const DIST_DIR = path.join(__dirname, "../dist");
 const REPO_FILE = path.join(DIST_DIR, "repository.json");
 
+const ICONS_DIR = path.join(DIST_DIR, "icons");
+
 if (!fs.existsSync(DIST_DIR)) {
   fs.mkdirSync(DIST_DIR);
+}
+if (!fs.existsSync(ICONS_DIR)) {
+  fs.mkdirSync(ICONS_DIR);
 }
 
 const repository = {
@@ -19,11 +24,58 @@ const repository = {
 async function buildApp(appName) {
   const appPath = path.join(APPS_DIR, appName);
   const pkgPath = path.join(appPath, "package.json");
+  const metadataPath = path.join(appPath, "metadata.json");
 
   if (!fs.existsSync(pkgPath)) return;
 
   const pkg = require(pkgPath);
+  let metadata = {};
+  if (fs.existsSync(metadataPath)) {
+    try {
+      metadata = require(metadataPath);
+    } catch (e) {
+      console.warn(`Failed to read metadata for ${appName}`);
+    }
+  }
+
   console.log(`Building ${pkg.name} v${pkg.version}...`);
+
+  // Handle Icon
+  let iconPath = null;
+  const iconSource =
+    pkg.kaname?.icon ||
+    metadata.icon ||
+    (pkg.kaname && pkg.kaname.icon) ||
+    "icon.png"; // Default fallback
+
+  // Try to find the icon file
+  const possibleIconPaths = [
+    path.join(appPath, iconSource),
+    path.join(appPath, iconSource + ".png"),
+    path.join(appPath, "icon.png"),
+  ];
+
+  let foundIcon = null;
+  for (const p of possibleIconPaths) {
+    if (fs.existsSync(p)) {
+      foundIcon = p;
+      break;
+    }
+  }
+
+  if (foundIcon) {
+    const iconExt = path.extname(foundIcon);
+    const iconDestName = `${pkg.name}${iconExt}`;
+    fs.copyFileSync(foundIcon, path.join(ICONS_DIR, iconDestName));
+    iconPath = `icons/${iconDestName}`;
+  }
+
+  // Determine Title
+  const title =
+    (metadata.title && metadata.title.en_EN) ||
+    pkg.kaname?.title ||
+    pkg.description ||
+    pkg.name;
 
   try {
     console.log(`  -> Installing dependencies for ${appName}...`);
@@ -46,11 +98,12 @@ async function buildApp(appName) {
 
       repository.apps.push({
         name: pkg.name,
+        title: title,
         version: pkg.version,
         description: pkg.description,
-        category: pkg.kaname?.category || "Uncategorized",
+        category: pkg.kaname?.category || metadata.category || "Uncategorized",
         download: zipName,
-        icon: pkg.kaname?.icon,
+        icon: iconPath,
       });
       resolve();
     });
