@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-06T08:00:32.432Z",
+  "generatedAt": "2026-01-06T08:05:35.921Z",
   "apps": [
     {
       "name": "FileManager",
@@ -36,7 +36,8 @@
       "description": "Gnome Icons for KanameOS",
       "category": "Uncategorized",
       "download": "gnome-icons-1.0.0.wpk",
-      "icon": null
+      "icon": "icons/gnome-icons.png",
+      "iconName": "icon.png"
     }
   ]
 }
