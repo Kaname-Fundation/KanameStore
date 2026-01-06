@@ -2,7 +2,6 @@
   "type": "icons",
   "version": "1.0.0",
   "name": "GnomeIcons",
-    "icon": "icon.png",
   "title": {
     "en_EN": "Gnome Icons",
     "fr_FR": "Icônes du bureau Gnome",
