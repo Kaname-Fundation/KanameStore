@@ -1,6 +1,15 @@
 {
-  "generatedAt": "2026-01-06T07:17:45.924Z",
+  "generatedAt": "2026-01-06T08:00:32.432Z",
   "apps": [
+    {
+      "name": "FileManager",
+      "title": "File Manager",
+      "version": "2.0.0",
+      "category": "utilities",
+      "download": "filemanager-2.0.0.wpk",
+      "icon": null,
+      "iconName": "system-file-manager"
+    },
     {
       "name": "SystemControl",
       "title": "System Control",
@@ -21,13 +30,13 @@
       "iconName": "utilities-terminal"
     },
     {
-      "name": "FileManager",
-      "title": "File Manager",
-      "version": "2.0.0",
-      "category": "utilities",
-      "download": "filemanager-2.0.0.wpk",
-      "icon": null,
-      "iconName": "system-file-manager"
+      "name": "GnomeIcons",
+      "title": "Gnome Icons",
+      "version": "1.0.0",
+      "description": "Gnome Icons for KanameOS",
+      "category": "Uncategorized",
+      "download": "gnome-icons-1.0.0.wpk",
+      "icon": null
     }
   ]
 }
