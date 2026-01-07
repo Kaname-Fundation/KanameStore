@@ -1,6 +1,6 @@
 {
   "name": "settings-application",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "title": {
     "en_EN": "Settings"
   },
@@ -10,7 +10,6 @@
   "icon": "preferences-system",
   "category": "system",
   "singleton": true,
-  "server": "server.js",
   "files": [
     "main.js",
     "main.css"
