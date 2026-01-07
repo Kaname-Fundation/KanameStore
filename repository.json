@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-07T06:57:36.424Z",
+  "generatedAt": "2026-01-07T07:01:33.800Z",
   "apps": [
     {
       "name": "FileManager",
@@ -46,6 +46,16 @@
       "download": "terminal-1.1.1.wpk",
       "icon": null,
       "iconName": "utilities-terminal"
+    },
+    {
+      "name": "osjs-taskmanager",
+      "title": "Task Manager",
+      "version": "1.0.0",
+      "description": "Task Manager",
+      "category": "system",
+      "download": "osjs-taskmanager-1.0.0.wpk",
+      "icon": null,
+      "iconName": "utilities-system-monitor"
     }
   ]
 }
