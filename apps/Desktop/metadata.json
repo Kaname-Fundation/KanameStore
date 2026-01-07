@@ -1,0 +1,16 @@
+{
+  "name": "osjs-desktop",
+  "category": "system",
+  "version": "1.0.0",
+  "autostart": true,
+  "singleton": true,
+  "icon": "computer",
+  "title": {
+    "en_EN": "Desktop Shell"
+  },
+  "description": "KanameOS Desktop Shell & Wallpaper",
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

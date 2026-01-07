@@ -1,0 +1,16 @@
+{
+  "name": "osjs-panels",
+  "category": "system",
+  "version": "1.0.0",
+  "autostart": true,
+  "singleton": true,
+  "icon": "preferences-desktop-display",
+  "title": {
+    "en_EN": "Panels Service"
+  },
+  "description": "System Panels Service",
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

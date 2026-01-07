@@ -1,0 +1,16 @@
+{
+  "name": "osjs-notifications",
+  "category": "system",
+  "version": "1.0.0",
+  "autostart": true,
+  "singleton": true,
+  "icon": "dialog-information",
+  "title": {
+    "en_EN": "Notifications"
+  },
+  "description": "System Notifications",
+  "files": [
+    "main.js",
+    "main.css"
+  ]
+}

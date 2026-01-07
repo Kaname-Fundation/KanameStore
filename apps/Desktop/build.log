@@ -1,0 +1,17 @@
+
+> osjs-desktop@1.0.0 build
+> rspack
+
+[1m[31mERROR[39m[22m in [1m./src/provider.js[39m[22m [1m[32m102:5-51[39m[22m
+  [31m├ù[0m Module not found: Can't resolve '@osjs/common' in 'E:\KanameFundation\KanameOS\src\packages\Desktop\src'
+     Ôò¡ÔöÇ[102:4]
+ [2m100[0m Ôöé  * @author  Anders Evenrud <andersevenrud@gmail.com>
+ [2m101[0m Ôöé  * @license Simplified BSD License
+ [2m102[0m Ôöé  */ import { ServiceProvider } from '@osjs/common';
+     ┬À [35;1m    ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ[0m
+ [2m103[0m Ôöé import Desktop from './desktop';
+ [2m104[0m Ôöé var DesktopServiceProvider = /*#__PURE__*/ function(ServiceProvider) {
+     Ôò░ÔöÇÔöÇÔöÇÔöÇ
+[0m
+
+Rspack compiled with [1m[31m1 error[39m[22m in 402 ms
