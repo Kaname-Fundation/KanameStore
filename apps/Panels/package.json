@@ -35,7 +35,8 @@
   "license": "BSD-2-Clause",
   "dependencies": {
     "@osjs/event-emitter": "^1.0.10",
-    "hyperapp": "^1.2.10"
+    "hyperapp": "^1.2.10",
+    "@osjs/gui": "^4.0.0"
   },
   "devDependencies": {
     "@osjs/dev-meta": "^2.1.0",
