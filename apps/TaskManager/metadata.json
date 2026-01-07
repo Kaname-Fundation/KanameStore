@@ -1,5 +1,7 @@
 {
   "name": "osjs-taskmanager",
+  "version": "1.0.0",
+  "author": "KanameFundation",
   "category": "system",
   "icon": "utilities-system-monitor",
   "title": {
