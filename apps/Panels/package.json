@@ -1,5 +1,5 @@
 {
-  "name": "@osjs/panels",
+  "name": "osjs-panel",
   "version": "3.0.32",
   "description": "OS.js Panels",
   "main": "dist/main.js",
