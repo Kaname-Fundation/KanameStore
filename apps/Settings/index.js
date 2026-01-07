@@ -342,20 +342,11 @@ const renderAboutTab = (state, actions) => {
     [
       h("h2", {}, "About KanameOS"),
       h("p", {}, "KanameOS - Web Based Operating System"),
-      h("p", {}, `Version: ${WEBOS_VERSION}`),
       h("p", {}, [
         "Author: ",
         h("a", { href: "mailto:cyberaioff@gmail.com" }, "Abdul Vaiz"),
       ]),
       h("p", {}, "License: BSD-2-Clause"),
-      h("p", {}, [
-        "Website: ",
-        h(
-          "a",
-          { href: "https://github.com/DemuraAIdev/webOS", target: "_blank" },
-          "https://github.com/DemuraAIdev/webOS"
-        ),
-      ]),
     ]
   );
 };
