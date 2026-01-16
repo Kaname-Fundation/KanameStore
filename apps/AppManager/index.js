@@ -136,6 +136,16 @@ const register = (core, args, options, metadata) => {
           "No description";
         const version = metadata.version || "0.0.0";
 
+        // Check for dependencies
+        if (metadata.dependencies && Array.isArray(metadata.dependencies)) {
+          const installedPackages = core.make("osjs/packages").getPackages().map(p => p.name);
+          const missing = metadata.dependencies.filter(d => !installedPackages.includes(d));
+
+          if (missing.length > 0) {
+            throw new Error(`Missing dependencies: ${missing.join(", ")}. Please install them first.`);
+          }
+        }
+
         proc
           .createWindow({
             id: "AppInstallDialog",

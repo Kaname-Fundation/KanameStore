@@ -1,10 +1,13 @@
 {
   "name": "store",
-  "version": "1.0.2",
+  "version": "1.2.2",
   "title": {
     "en_EN": "App Store"
   },
   "icon": "system-software-install",
   "category": "system",
-  "files": ["main.js", "main.css"]
+  "files": [
+    "main.js",
+    "main.css"
+  ]
 }
