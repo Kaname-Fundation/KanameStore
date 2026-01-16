@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-16T15:22:06.608Z",
+  "generatedAt": "2026-01-16T16:02:55.824Z",
   "apps": [
     {
       "name": "FileManager",
@@ -138,6 +138,16 @@
       "download": "osjs-desktop-1.2.1.wpk",
       "icon": null,
       "iconName": "computer"
+    },
+    {
+      "name": "AceEditor",
+      "title": "Ace Editor",
+      "version": "1.2.7",
+      "description": "KanameOS Ace Editor Application",
+      "category": "development",
+      "download": "ace-application-1.2.7.wpk",
+      "icon": "icons/ace-application.png",
+      "iconName": "icon.png"
     }
   ]
 }
