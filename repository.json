@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-16T19:16:17.037Z",
+  "generatedAt": "2026-01-16T19:18:20.567Z",
   "apps": [
     {
       "name": "AceEditor",
@@ -227,10 +227,10 @@
     {
       "name": "Wolfenstein3D",
       "title": "Wolfenstein 3D",
-      "version": "1.0.2",
+      "version": "1.1.2",
       "description": "KanameOS Wolfenstein 3D Application",
       "category": "games",
-      "download": "wolfenstein3d-application-1.0.2.wpk",
+      "download": "wolfenstein3d-application-1.1.2.wpk",
       "icon": "icons/wolfenstein3d-application.png",
       "iconName": "icon.png",
       "dependencies": []
