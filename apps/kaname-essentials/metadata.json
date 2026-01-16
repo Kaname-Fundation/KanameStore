@@ -1,7 +1,8 @@
 {
     "name": "kaname-essentials",
-    "version": "1.0.4",
+    "version": "1.1.5",
     "category": "system",
+    "type": "extension",
     "icon": "system-software-install",
     "title": {
         "en_EN": "Kaname Essentials"
@@ -12,7 +13,10 @@
     "dependencies": [
         "osjs-desktop",
         "osjs-panels",
-        "osjs-notifications"
+        "osjs-notifications",
+        "StandardTheme",
+        "GnomeIcons",
+        "FreedesktopSounds"
     ],
     "files": [
         "main.js"

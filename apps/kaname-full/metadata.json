@@ -1,0 +1,20 @@
+{
+    "name": "kaname-full",
+    "version": "1.1.5",
+    "category": "system",
+    "type": "extension",
+    "icon": "system-software-install",
+    "title": {
+        "en_EN": "Kaname Full"
+    },
+    "description": {
+        "en_EN": "Metapackage installing all KanameOS components"
+    },
+    "dependencies": [
+        "kaname-apps",
+        "kaname-essentials"
+    ],
+    "files": [
+        "main.js"
+    ]
+}

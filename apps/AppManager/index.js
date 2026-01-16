@@ -275,6 +275,10 @@ const register = (core, args, options, metadata) => {
                     h("div", { style: { fontWeight: "bold" } }, "Author:"),
                     h("div", {}, author),
                   ]),
+                  h("div", { style: { marginBottom: "1em" } }, [
+                    h("div", { style: { fontWeight: "bold" } }, "Dependencies:"),
+                    h("div", {}, (metadata.dependencies && metadata.dependencies.length) ? metadata.dependencies.join(", ") : "None"),
+                  ]),
                   h(Box, { grow: 1 }), // Spacer
                   h(
                     "div",

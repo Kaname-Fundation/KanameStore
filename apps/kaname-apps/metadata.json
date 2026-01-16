@@ -1,0 +1,21 @@
+{
+    "name": "kaname-apps",
+    "version": "1.0.5",
+    "category": "system",
+    "type": "extension",
+    "icon": "system-software-install",
+    "title": {
+        "en_EN": "Kaname Apps"
+    },
+    "description": {
+        "en_EN": "Metapackage installing apps"
+    },
+    "dependencies": [
+        "settings-application",
+        "store",
+        "appmanager"
+    ],
+    "files": [
+        "main.js"
+    ]
+}
