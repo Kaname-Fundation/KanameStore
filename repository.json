@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-16T18:27:10.091Z",
+  "generatedAt": "2026-01-16T18:31:15.115Z",
   "apps": [
     {
       "name": "AceEditor",
@@ -89,17 +89,6 @@
       "dependencies": []
     },
     {
-      "name": "store",
-      "title": "App Store",
-      "version": "1.0.2",
-      "description": "App Store for KanameOS",
-      "category": "system",
-      "download": "store-1.0.2.wpk",
-      "icon": null,
-      "iconName": "system-software-install",
-      "dependencies": []
-    },
-    {
       "name": "SystemControl",
       "title": "System Control",
       "version": "1.2.2",
@@ -176,34 +165,6 @@
       "dependencies": []
     },
     {
-      "name": "appmanager",
-      "title": "App Manager",
-      "version": "1.0.4",
-      "description": "Application Manager for KanameOS",
-      "category": "system",
-      "download": "app-manager-1.0.4.wpk",
-      "icon": null,
-      "iconName": "system-software-install",
-      "dependencies": []
-    },
-    {
-      "name": "kaname-essentials",
-      "title": "Kaname Essentials",
-      "version": "1.1.5",
-      "category": "system",
-      "download": "kaname-essentials-1.1.5.wpk",
-      "icon": null,
-      "iconName": "system-software-install",
-      "dependencies": [
-        "osjs-desktop",
-        "osjs-panels",
-        "osjs-notifications",
-        "StandardTheme",
-        "GnomeIcons",
-        "FreedesktopSounds"
-      ]
-    },
-    {
       "name": "kaname-full",
       "title": "Kaname Full",
       "version": "1.1.5",
@@ -234,6 +195,45 @@
         "terminal",
         "osjs-taskmanager",
         "textpad"
+      ]
+    },
+    {
+      "name": "appmanager",
+      "title": "App Manager",
+      "version": "1.1.4",
+      "description": "Application Manager for KanameOS",
+      "category": "system",
+      "download": "app-manager-1.1.4.wpk",
+      "icon": null,
+      "iconName": "system-software-install",
+      "dependencies": []
+    },
+    {
+      "name": "store",
+      "title": "App Store",
+      "version": "1.2.2",
+      "description": "App Store for KanameOS",
+      "category": "system",
+      "download": "store-1.2.2.wpk",
+      "icon": null,
+      "iconName": "system-software-install",
+      "dependencies": []
+    },
+    {
+      "name": "kaname-essentials",
+      "title": "Kaname Essentials",
+      "version": "1.1.6",
+      "category": "system",
+      "download": "kaname-essentials-1.1.6.wpk",
+      "icon": null,
+      "iconName": "system-software-install",
+      "dependencies": [
+        "osjs-desktop",
+        "osjs-panels",
+        "osjs-notifications",
+        "StandardTheme",
+        "GnomeIcons",
+        "FreedesktopSounds"
       ]
     }
   ]
