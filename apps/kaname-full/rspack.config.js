@@ -6,7 +6,7 @@ module.exports = {
     entry: "./index.js",
     output: {
         filename: "main.js",
-        library: "kaname-essentials",
+        library: "kaname-full",
         libraryTarget: "umd",
         globalObject: "this",
         path: path.resolve(__dirname, "dist"),
