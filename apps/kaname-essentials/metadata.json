@@ -1,0 +1,20 @@
+{
+    "name": "kaname-essentials",
+    "version": "1.0.0",
+    "category": "system",
+    "icon": "system-software-install",
+    "title": {
+        "en_EN": "Kaname Essentials"
+    },
+    "description": {
+        "en_EN": "Metapackage installing core KanameOS components"
+    },
+    "dependencies": [
+        "osjs-desktop",
+        "osjs-panels",
+        "osjs-notifications"
+    ],
+    "files": [
+        "main.js"
+    ]
+}
