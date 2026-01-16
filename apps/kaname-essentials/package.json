@@ -1,6 +1,9 @@
 {
     "name": "kaname-essentials",
     "version": "1.0.0",
+    "scripts": {
+        "build": "rspack"
+    },
     "devDependencies": {
         "@rspack/cli": "^1.0.0",
         "@rspack/core": "^1.0.0"
