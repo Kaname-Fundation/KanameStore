@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-16T16:02:55.824Z",
+  "generatedAt": "2026-01-16T16:06:06.099Z",
   "apps": [
     {
       "name": "FileManager",
@@ -147,6 +147,16 @@
       "category": "development",
       "download": "ace-application-1.2.7.wpk",
       "icon": "icons/ace-application.png",
+      "iconName": "icon.png"
+    },
+    {
+      "name": "TextPad",
+      "title": "TextPad",
+      "version": "1.2.7",
+      "description": "KanameOS Textpad Application",
+      "category": "utilities",
+      "download": "textpad-application-1.2.7.wpk",
+      "icon": "icons/textpad-application.png",
       "iconName": "icon.png"
     }
   ]
