@@ -776,7 +776,8 @@ export default class Desktop extends EventEmitter {
    * @param {Event} ev
    */
   onContextMenu(ev) {
-    const lockSettings = this.core.config("desktop.lock");
+    const _ = this.core.make("osjs/locale").translate;
+
     const extras = [].concat(
       ...this.contextmenuEntries.map((e) => (typeof e === "function" ? e() : e))
     );
@@ -788,42 +789,47 @@ export default class Desktop extends EventEmitter {
     const menu = [
       ...(config.defaults
         ? [
-            {
-              label: "LBL_SHOW_ALL_WINDOWS",
-              onclick: () => {
-                this.Window.getWindows().forEach((w) => w.restore());
-              },
+          {
+            label: _("LBL_DESKTOP_SELECT_WALLPAPER"),
+            onclick: () => {
+              this.core.make("osjs/dialog", "file", {
+                type: "open",
+                mime: [/^image/]
+              }, (btn, item) => {
+                if (btn === "ok") {
+                  this.core.make("osjs/settings")
+                    .set("osjs/desktop", "background.src", item)
+                    .save()
+                    .then(() => this.applySettings());
+                }
+              });
             },
-            {
-              label: "LBL_HIDE_ALL_WINDOWS",
-              onclick: () => {
-                this.Window.getWindows().forEach((w) => w.minimize());
-              },
+          },
+          {
+            label: _("LBL_DESKTOP_SELECT_THEME"),
+            onclick: () => {
+              this.core
+                .make("osjs/packages")
+                .launch("settings-application", { section: "theme" });
             },
-            {
-              label: "LBL_LOCK_POSITION",
-              checked: lockSettings,
-              onclick: () => {
-                // TODO: Implement enable/disable
-              },
-            },
-          ]
+          },
+        ]
         : []),
       ...(config.wallpapers
         ? [
-            {
-              label: "LBL_SHOW_ICONS",
-              checked: hasIconview,
-              onclick: () => {
-                this._applySettingsByKey(
-                  "iconview.enabled",
-                  !hasIconview
-                ).then(() => {
-                  this.iconview.render();
-                });
-              },
+          {
+            label: "LBL_SHOW_ICONS",
+            checked: hasIconview,
+            onclick: () => {
+              this._applySettingsByKey(
+                "iconview.enabled",
+                !hasIconview
+              ).then(() => {
+                this.iconview.render();
+              });
             },
-          ]
+          },
+        ]
         : []),
       ...extras,
     ];
