@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-16T16:33:16.703Z",
+  "generatedAt": "2026-01-16T16:50:44.348Z",
   "apps": [
     {
       "name": "FileManager",
@@ -120,16 +120,6 @@
       "iconName": "icon.png"
     },
     {
-      "name": "appmanager",
-      "title": "App Manager",
-      "version": "1.0.3",
-      "description": "Application Manager for KanameOS",
-      "category": "system",
-      "download": "app-manager-1.0.3.wpk",
-      "icon": null,
-      "iconName": "system-software-install"
-    },
-    {
       "name": "osjs-desktop",
       "title": "Desktop Shell",
       "version": "1.2.1",
@@ -168,6 +158,16 @@
       "download": "wolfenstein3d-application-1.0.2.wpk",
       "icon": "icons/wolfenstein3d-application.png",
       "iconName": "icon.png"
+    },
+    {
+      "name": "appmanager",
+      "title": "App Manager",
+      "version": "1.0.4",
+      "description": "Application Manager for KanameOS",
+      "category": "system",
+      "download": "app-manager-1.0.4.wpk",
+      "icon": null,
+      "iconName": "system-software-install"
     }
   ]
 }
