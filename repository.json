@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-08T06:50:16.730Z",
+  "generatedAt": "2026-01-16T11:29:37.397Z",
   "apps": [
     {
       "name": "FileManager",
@@ -128,6 +128,16 @@
       "download": "standard-theme-1.2.2.wpk",
       "icon": null,
       "iconName": "preferences-desktop-theme"
+    },
+    {
+      "name": "Preview",
+      "title": "Preview",
+      "version": "1.1.17",
+      "description": "KanameOS Preview Application Package",
+      "category": "graphics",
+      "download": "preview-application-1.1.17.wpk",
+      "icon": "icons/preview-application.png",
+      "iconName": "image-x-generic"
     }
   ]
 }
