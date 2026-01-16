@@ -108,6 +108,7 @@ async function buildApp(appName) {
         download: zipName,
         icon: iconPath,
         iconName: metadata.icon || pkg.kaname?.icon,
+        dependencies: metadata.dependencies || [],
       });
       resolve();
     });
