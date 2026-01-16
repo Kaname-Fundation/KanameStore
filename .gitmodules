@@ -1,0 +1,3 @@
+[submodule "apps/Wolfenstein3D/html5-wolfenstein3D"]
+	path = apps/Wolfenstein3D/html5-wolfenstein3D
+	url = https://github.com/andersevenrud/html5-wolfenstein3D.git

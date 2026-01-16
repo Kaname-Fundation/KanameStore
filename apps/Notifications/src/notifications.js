@@ -29,7 +29,7 @@
  */
 
 import Notification from './notification';
-import {createCssText} from './utils/dom';
+import { createCssText } from './utils/dom';
 
 /**
  * Notification Factory
@@ -50,7 +50,7 @@ export default class Notifications {
     /**
      * @type {Element}
      */
-    this.$element = null;
+    this.history = []; // Notification History
   }
 
   /**
@@ -61,6 +61,7 @@ export default class Notifications {
       this.$element.remove();
       this.$element = null;
     }
+    // TODO: Destroy tray
   }
 
   /**
@@ -76,6 +77,7 @@ export default class Notifications {
     });
 
     this.setElementStyles();
+    this.initTray();
   }
 
   /**
@@ -90,7 +92,59 @@ export default class Notifications {
 
     const notification = new Notification(this.core, this.$element, options);
     notification.render();
+
+    // Add to history
+    this.history.unshift({
+      ...options,
+      date: new Date()
+    });
+
+    // Limit history to last 20 items
+    if (this.history.length > 20) {
+      this.history.pop();
+    }
+
     return notification;
+  }
+
+  /**
+   * Initializes the tray icon
+   */
+  initTray() {
+    if (this.tray) return;
+
+    const tray = this.core.make('osjs/tray');
+    if (!tray) return;
+    const { icon } = this.core.make('osjs/theme');
+
+    const _ = this.core.make('osjs/locale').translate;
+
+    this.tray = tray.create({
+      icon: icon('dialog-information'),
+      title: _('LBL_NOTIFICATIONS'),
+      onclick: (ev) => {
+        const menu = this.history.length > 0
+          ? this.history.map(item => ({
+            label: `${item.title}: ${item.message}`,
+            // data: item, // Can be used for actions
+          }))
+          : [{ label: 'No notifications', disabled: true }];
+
+        menu.push({ type: 'separator' });
+        menu.push({
+          label: 'Clear History',
+          disabled: this.history.length === 0,
+          onclick: () => {
+            this.history = [];
+          }
+        });
+
+        this.core.make('osjs/contextmenu').show({
+          position: ev,
+          menu
+        });
+      }
+    });
   }
 
   /**
