@@ -1,37 +1,15 @@
 
 (function ($) {
 
-    // these files are preloaded while the title screen is showing
-    var files = [
-        "js/random.js",
-        "js/angle.js",
-        "js/math.js",
-        "js/input.js",
-        "js/sound.js",
-        "js/menu.js",
-        "js/file.js",
-        "js/episodes.js",
-        "js/maps.js",
-        "js/game.js",
-        "js/player.js",
-        "js/sprites.js",
-        "js/powerups.js",
-        "js/ai.js",
-        "js/actorai.js",
-        "js/actors.js",
-        "js/actstat.js",
-        "js/weapon.js",
-        "js/doors.js",
-        "js/pushwall.js",
-        "js/areas.js",
-        "js/level.js",
-        "js/raycaster.js",
-        "js/renderer.js",
+    // Scripts are now loaded in game.html to ensure order.
+    // This file only handles asset preloading and initialization.
 
+    // these files are preloaded while the title screen is showing
+    // Asset files only.
+    var files = [
         "preload!art/menubg_main.png",
         "preload!art/menuitems.png",
         "preload!art/menuselector.png"
-
     ];
 
     // these files are preloaded in the background after the menu is displayed.
@@ -53,7 +31,21 @@
     ];
 
     $(document).ready(function () {
-        console.log("load_fixed.js ready. Wolf defined?", typeof Wolf !== 'undefined');
+        console.log("load_fixed.js ready. Checking components...");
+
+        if (typeof Wolf === 'undefined') {
+            console.error("Wolf namespace missing! Scripts failed to load.");
+            return;
+        }
+
+        var components = ['Input', 'Game', 'Menu'];
+        var missing = components.filter(function (c) { return typeof Wolf[c] === 'undefined'; });
+
+        if (missing.length > 0) {
+            console.error("Critical components missing: " + missing.join(", "));
+            // Should not happen with sync loading
+            return;
+        }
 
         var progress = $("<div>"),
             n = 0;
@@ -82,29 +74,23 @@
                 test: window.atob && window.btoa,
                 nope: "js/base64.js"
             }, {
-                // Main loading block
+                // Main loading block for ASSETS
                 load: files,
                 callback: function (file) {
-                    console.log("Loaded:", file);
+                    console.log("Loaded asset:", file);
                     progress.width((++n / (files.length)) * 100 + "%");
                 },
                 complete: function () {
-                    console.log("All main files loaded.");
-                    console.log("Wolf.Input defined?", typeof Wolf !== 'undefined' && typeof Wolf.Input !== 'undefined');
+                    console.log("All assets loaded.");
 
                     progress.remove();
                     $("#title-screen").fadeOut(1500, function () {
-                        if (typeof Wolf.Input !== 'undefined' && typeof Wolf.Game !== 'undefined') {
-                            Wolf.Input.init();
-                            Wolf.Game.init();
-                            Wolf.Menu.show();
-                        } else {
-                            console.error("Critical components missing:", {
-                                Input: typeof Wolf.Input,
-                                Game: typeof Wolf.Game
-                            });
-                        }
+                        // Init Game
+                        Wolf.Input.init();
+                        Wolf.Game.init();
+                        Wolf.Menu.show();
                     });
+
                     // preload non-essential art
                     Modernizr.load(files2);
                 }

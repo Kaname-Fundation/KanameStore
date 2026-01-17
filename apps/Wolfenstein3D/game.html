@@ -14,8 +14,36 @@
 
     <script src="js/modernizr.custom.js"></script>
     <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/wolf.js"></script> <!-- Load Wolf core synchronously -->
-    <script src="load_fixed.js"></script> <!-- Point to custom loader -->
+
+    <!-- Core Engine -->
+    <script src="js/wolf.js"></script>
+    <script src="js/random.js"></script>
+    <script src="js/angle.js"></script>
+    <script src="js/math.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/sound.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/file.js"></script>
+    <script src="js/episodes.js"></script>
+    <script src="js/maps.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/powerups.js"></script>
+    <script src="js/ai.js"></script>
+    <script src="js/actorai.js"></script>
+    <script src="js/actors.js"></script>
+    <script src="js/actstat.js"></script>
+    <script src="js/weapon.js"></script>
+    <script src="js/doors.js"></script>
+    <script src="js/pushwall.js"></script>
+    <script src="js/areas.js"></script>
+    <script src="js/level.js"></script>
+    <script src="js/raycaster.js"></script>
+    <script src="js/renderer.js"></script>
+
+    <!-- Custom Loader (Assets & Init) -->
+    <script src="load_fixed.js"></script>
     <script>
         window.addEventListener('message', function (ev) {
             if (ev.data === 'pause') {
