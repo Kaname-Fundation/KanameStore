@@ -25,12 +25,18 @@ const createView = (core, proc) => (state, actions) => {
           fontSize: "0.9em"
         }
       }, state.installLogs.map(log => h("div", {}, log))),
-      h("div", { style: { marginTop: "10px", textAlign: "right" } }, [
-        h(Button, {
-          onclick: actions.closeProgress,
-          disabled: state.installProgress < 100 && state.installProgress > 0 // Only disable if in progress but not done/failed
-        }, "Close")
-      ])
+      h("div", { style: { marginTop: "10px", textAlign: "right" } },
+        state.waitingForConfirmation ? [
+          h("span", { style: { marginRight: "10px", fontWeight: "bold" } }, "Proceed with installation?"),
+          h(Button, { onclick: actions.closeProgress, style: { marginRight: "10px" } }, "Cancel"),
+          h(Button, { onclick: () => actions.proceedInstall({ core }), type: "primary" }, "Confirm & Install")
+        ] : [
+          h(Button, {
+            onclick: actions.closeProgress,
+            disabled: state.installProgress < 100 && state.installProgress > 0
+          }, "Close")
+        ]
+      )
     ]);
   }
 
@@ -144,110 +150,6 @@ const createView = (core, proc) => (state, actions) => {
 
     h(Statusbar, {}, `Total Apps: ${state.apps.length}`),
   ]);
-
-  return h(Box, { class: "kaname-store" }, [
-    h(Toolbar, { class: "store-toolbar" }, [
-      h(TextField, {
-        placeholder: "Search apps...",
-        oninput: (ev, value) => actions.setSearch(value),
-        value: state.search,
-        box: { grow: 1 },
-      }),
-      h(
-        Button,
-        {
-          onclick: () => actions.showRepoManager(),
-        },
-        "Repositories"
-      ),
-      h(
-        Button,
-        {
-          onclick: () => actions.fetchApps(),
-          disabled: state.loading,
-        },
-        "Refresh"
-      ),
-    ]),
-
-    state.loading
-      ? h(
-        Box,
-        { grow: 1, align: "center", justify: "center" },
-        "Loading Store..."
-      )
-      : h(
-        "div",
-        { class: "store-grid" },
-        filteredApps.map((pkg) => {
-          const isInstalling = state.installing[pkg.name];
-          const installedVersion = state.installedPackages[pkg.name];
-          const isInstalled = !!installedVersion;
-          // Check for updates by comparing version numbers
-          const hasUpdate = isInstalled && installedVersion !== pkg.version;
-
-          // Always use repository version and download for display and install
-          const repoVersion = pkg.version;
-          const repoDownload = pkg.download;
-
-          let iconUrl = proc.resource("icon.png");
-
-          if (pkg.icon) {
-            iconUrl = pkg.icon.match(/^https?:\//)
-              ? pkg.icon
-              : `${pkg._repoBase}/${pkg.icon}`;
-          } else if (pkg.iconName) {
-            iconUrl = core.make("osjs/theme").icon(pkg.iconName);
-          }
-
-          const fallbackIcon = core.make("osjs/theme").icon("application-x-executable");
-
-          let buttonText = "Install";
-          let buttonDisabled = isInstalling;
-          let buttonType = "primary";
-
-          if (isInstalling) {
-            buttonText = "Downloading...";
-          } else if (hasUpdate) {
-            buttonText = "Update";
-            buttonType = "warning";
-          } else if (isInstalled) {
-            buttonText = "Installed";
-            buttonDisabled = true;
-          }
-
-          return h("div", { class: "app-card" }, [
-            h("img", {
-              class: "app-icon",
-              src: iconUrl,
-              onerror: (ev) => {
-                if (ev.target.src !== fallbackIcon) {
-                  ev.target.src = fallbackIcon;
-                }
-              },
-            }),
-            h("div", { class: "app-name" }, pkg.title || pkg.name),
-            h(
-              "div",
-              { class: "app-meta" },
-              `v${repoVersion} • ${pkg.category}`
-            ),
-            h("div", { class: "app-desc" }, pkg.description),
-            h(
-              Button,
-              {
-                onclick: () => actions.installApp({ pkg, core }),
-                disabled: buttonDisabled,
-                type: buttonType,
-              },
-              buttonText
-            ),
-          ]);
-        })
-      ),
-
-    h(Statusbar, {}, `Total Apps: ${state.apps.length}`),
-  ]);
 };
 
 const register = (core, args, options, metadata) => {
@@ -290,6 +192,8 @@ const register = (core, args, options, metadata) => {
           installLogs: [],
           installProgress: 0,
           installStatus: "",
+          waitingForConfirmation: false,
+          pendingQueue: []
         },
         {
           setSearch: (search) => (state) => ({ search }),
@@ -321,11 +225,16 @@ const register = (core, args, options, metadata) => {
             installProgress: percent,
             installStatus: status || state.installStatus
           }),
+          setWaitingForConfirmation: (val) => (state) => ({ waitingForConfirmation: val }),
+          setPendingQueue: (list) => (state) => ({ pendingQueue: list }),
+
           closeProgress: () => (state) => ({
             currentView: "home",
             installLogs: [],
             installProgress: 0,
-            installStatus: "Ready"
+            installStatus: "Ready",
+            waitingForConfirmation: false,
+            pendingQueue: []
           }),
 
           refreshInstalled: () => (state) => {
@@ -392,7 +301,10 @@ const register = (core, args, options, metadata) => {
           },
 
           showRepoManager: () => (state, actions) => {
-            // Custom dialog for better UX
+            // ... (keep showRepoManager as is, assume logic is same)
+            // Wait, I must provide full content or I lose existing logic.
+            // I'll paste the existing logic for showRepoManager.
+
             let win = core.make("osjs/window", {
               id: "RepoManagerWindow",
               title: "Manage Repositories",
@@ -401,9 +313,7 @@ const register = (core, args, options, metadata) => {
               attributes: { minHeight: 300, minWidth: 400 },
             });
 
-            // Only mount Hyperapp app ONCE after window is ready
             win.render(($content, win) => {
-              // Create a container div for Hyperapp
               $content.innerHTML = "";
               const container = document.createElement("div");
               container.style.height = "100%";
@@ -453,7 +363,7 @@ const register = (core, args, options, metadata) => {
                       return {};
                     },
                   },
-                  (state, actions) =>
+                  (state, actionsRepo) => // Renamed to actionsRepo to avoid confusion with outer actions
                     h(
                       Box,
                       { style: { padding: 16, height: "100%" }, grow: 1 },
@@ -483,7 +393,7 @@ const register = (core, args, options, metadata) => {
                                 oninput: (ev, value) => {
                                   const safeValue = value !== undefined ? value : (ev.target ? ev.target.value : ev);
                                   if (state.repos[idx] !== safeValue) {
-                                    actions.setRepo({ idx, value: safeValue });
+                                    actionsRepo.setRepo({ idx, value: safeValue });
                                   }
                                 },
                                 box: { grow: 1 },
@@ -492,7 +402,7 @@ const register = (core, args, options, metadata) => {
                               h(
                                 Button,
                                 {
-                                  onclick: () => actions.removeRepo(idx),
+                                  onclick: () => actionsRepo.removeRepo(idx),
                                   disabled: state.repos.length === 1,
                                   title: "Remove this repository",
                                   style: { margin: 0, height: "auto", minWidth: "30px" }
@@ -505,7 +415,7 @@ const register = (core, args, options, metadata) => {
                         h(
                           Button,
                           {
-                            onclick: actions.addRepo,
+                            onclick: actionsRepo.addRepo,
                             style: { marginBottom: 16 },
                           },
                           "+ Add Repository"
@@ -523,14 +433,14 @@ const register = (core, args, options, metadata) => {
                             h(
                               Button,
                               {
-                                onclick: actions.cancel,
+                                onclick: actionsRepo.cancel,
                                 style: { marginRight: 8 },
                               },
                               "Cancel"
                             ),
                             h(
                               Button,
-                              { onclick: actions.save, type: "primary" },
+                              { onclick: actionsRepo.save, type: "primary" },
                               "Save"
                             ),
                           ]
@@ -548,20 +458,17 @@ const register = (core, args, options, metadata) => {
               async (state, actions) => {
                 // Initialize Progress UI
                 actions.setView("progress");
-                actions.addLog(`Starting installation for ${pkg.name}...`);
-
-                // No syncProgress needed as main view updates automatically
+                actions.setWaitingForConfirmation(false);
+                actions.setPendingQueue([]);
+                actions.addLog(`Starting resolution for ${pkg.name}...`);
+                actions.updateProgress({ percent: 10, status: "Resolving dependencies..." });
 
                 const log = (msg) => {
                   actions.addLog(msg);
                 };
-                const progress = (pct, status) => {
-                  actions.updateProgress({ percent: pct, status });
-                };
 
                 // Helper to resolve dependencies recursively
                 const resolveDependencies = (targetPkg, allApps, visited = new Set()) => {
-                  log(`Resolving dependencies for ${targetPkg.name}...`);
                   if (visited.has(targetPkg.name)) return [];
                   visited.add(targetPkg.name);
 
@@ -572,7 +479,7 @@ const register = (core, args, options, metadata) => {
                       if (depPkg) {
                         list = [...list, ...resolveDependencies(depPkg, allApps, visited)];
                       } else {
-                        log(`[WARN] Dependency '${depName}' not found. Skipping.`);
+                        log(`[WARN] Dependency '${depName}' not found.`);
                       }
                     });
                   }
@@ -581,24 +488,40 @@ const register = (core, args, options, metadata) => {
                 };
 
                 // 1. Resolve Tree
-                progress(10, "Resolving dependencies...");
                 const queue = resolveDependencies(pkg, state.apps);
 
-                // 2. Filter already installed
+                // 2. Filter already installed (But allow the main pkg to update)
                 const installedNames = core.make("osjs/packages").getPackages()
                   .filter(p => p.name)
                   .map(p => p.name);
-                const toInstall = queue.filter(p => !installedNames.includes(p.name));
+
+                const toInstall = queue.filter(p => p.name === pkg.name || !installedNames.includes(p.name));
 
                 if (toInstall.length === 0) {
                   log("All packages already installed.");
-                  progress(100, "Done");
+                  actions.updateProgress({ percent: 100, status: "Done" });
                   return;
                 }
 
                 log(`Installation Queue: ${toInstall.map(p => p.name).join(", ")}`);
+                log("Waiting for user confirmation...");
 
-                // 3. Batch Install
+                actions.setPendingQueue(toInstall);
+                actions.setWaitingForConfirmation(true);
+                actions.updateProgress({ percent: 20, status: "Waiting for confirmation..." });
+              },
+
+          proceedInstall:
+            ({ core }) =>
+              async (state, actions) => {
+                actions.setWaitingForConfirmation(false);
+                const toInstall = state.pendingQueue;
+
+                const log = (msg) => actions.addLog(msg);
+                const progress = (pct, status) => actions.updateProgress({ percent: pct, status });
+
+                log("Confirmation received. Proceeding...");
+
                 try {
                   const total = toInstall.length;
                   for (let i = 0; i < total; i++) {
@@ -652,7 +575,7 @@ const register = (core, args, options, metadata) => {
                   progress(100, "Installation Complete!");
                   log("All operations completed successfully.");
                   actions.refreshInstalled();
-                  core.make("osjs/notification", { title: "Success", message: `Installed ${pkg.name} and dependencies.` });
+                  core.make("osjs/notification", { title: "Success", message: `Installed successfully.` });
 
                 } catch (e) {
                   console.error(e);
@@ -662,8 +585,9 @@ const register = (core, args, options, metadata) => {
                 } finally {
                   // Ensure flags are cleared
                   toInstall.forEach(p => actions.setInstalling({ name: p.name, value: false }));
+                  actions.setPendingQueue([]);
                 }
-              },
+              }
         },
         createView(core, proc),
         $content
