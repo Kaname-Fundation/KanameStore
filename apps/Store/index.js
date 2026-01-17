@@ -40,12 +40,85 @@ const createView = (core, proc) => (state, actions) => {
     ]);
   }
 
+  if (state.currentView === "updates") {
+    const updates = state.apps.filter(pkg => {
+      const installedVersion = state.installedPackages[pkg.name];
+      return installedVersion && installedVersion !== pkg.version;
+    });
+
+    return h(Box, { class: "kaname-store", padding: false, style: { display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' } }, [
+      h("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" } }, [
+        h("h2", { style: { margin: 0 } }, "Available Updates"),
+        h(Button, { onclick: () => actions.setView("home") }, "Back to Store")
+      ]),
+
+      updates.length === 0
+        ? h("div", { style: { padding: "20px", textAlign: "center" } }, "No updates available. You are up to date!")
+        : [
+          h("div", { style: { marginBottom: "20px" } }, [
+            h(Button, {
+              type: "primary",
+              onclick: () => actions.updateAll({ updates, core })
+            }, `Update All (${updates.length})`)
+          ]),
+          h("div", { style: { overflowY: "auto", flex: 1 } },
+            updates.map(pkg => {
+              const installedVersion = state.installedPackages[pkg.name];
+              return h("div", { class: "app-card", style: { display: "flex", flexDirection: "row", alignItems: "center", height: "auto", minHeight: "80px", marginBottom: "10px", width: "100%" } }, [
+                h("div", { style: { flex: 1 } }, [
+                  h("div", { class: "app-name" }, pkg.title || pkg.name),
+                  h("div", { class: "app-meta" }, `Current: v${installedVersion} → New: v${pkg.version}`),
+                ]),
+                h(Button, { onclick: () => actions.installApp({ pkg, core }) }, "Update")
+              ]);
+            })
+          )
+        ]
+    ]);
+  }
+
+  if (state.currentView === "repositories") {
+    return h(Box, { class: "kaname-store", padding: false, style: { display: 'flex', flexDirection: 'column', height: '100%', padding: '20px' } }, [
+      h("h2", { style: { marginTop: 0 } }, "Manage Repositories"),
+      h("div", { style: { marginBottom: "15px", flex: 1, overflowY: "auto" } }, [
+        h("div", { style: { marginBottom: 12, fontWeight: "bold" } }, "Repository URLs:"),
+        ...state.tempRepositories.map((repo, idx) =>
+          h("div", { style: { display: "flex", alignItems: "center", marginBottom: "5px" } }, [
+            h(TextField, {
+              value: repo,
+              placeholder: "https://...",
+              oninput: (ev, value) => actions.updateRepo({ idx, value }),
+              box: { grow: 1 },
+              style: { marginRight: "8px" }
+            }),
+            h(Button, {
+              onclick: () => actions.removeRepo(idx),
+              disabled: state.tempRepositories.length === 1,
+              title: "Remove this repository"
+            }, "✕")
+          ])
+        ),
+        h(Button, { onclick: actions.addRepo }, "+ Add Repository")
+      ]),
+      h("div", { style: { display: "flex", justifyContent: "flex-end", marginTop: "10px" } }, [
+        h(Button, { onclick: () => actions.setView("home"), style: { marginRight: "8px" } }, "Cancel"),
+        h(Button, { onclick: actions.saveRepos, type: "primary" }, "Save & Reload")
+      ])
+    ]);
+  }
+
   const filteredApps = state.apps.filter((pkg) => {
     const query = state.search.toLowerCase();
     const name = pkg.name.toLowerCase();
     const desc = (pkg.description || "").toLowerCase();
     return name.includes(query) || desc.includes(query);
   });
+
+  // Calculate update count for badge
+  const updateCount = state.apps.filter(pkg => {
+    const installedVersion = state.installedPackages[pkg.name];
+    return installedVersion && installedVersion !== pkg.version;
+  }).length;
 
   return h(Box, { class: "kaname-store" }, [
     h(Toolbar, { class: "store-toolbar" }, [
@@ -58,7 +131,28 @@ const createView = (core, proc) => (state, actions) => {
       h(
         Button,
         {
-          onclick: () => actions.showRepoManager(),
+          onclick: () => actions.setView("updates"),
+          style: { position: "relative" }
+        },
+        [
+          "Updates",
+          updateCount > 0 ? h("span", {
+            style: {
+              background: "red",
+              color: "white",
+              borderRadius: "50%",
+              padding: "2px 6px",
+              fontSize: "0.8em",
+              marginLeft: "5px",
+              verticalAlign: "middle"
+            }
+          }, updateCount) : null
+        ]
+      ),
+      h(
+        Button,
+        {
+          onclick: () => actions.openRepoManager(),
         },
         "Repositories"
       ),
@@ -188,7 +282,8 @@ const register = (core, args, options, metadata) => {
           installing: {},
           installedPackages: {}, // Track installed packages in state
           repositories: savedRepos, // Load from settings
-          currentView: "home", // "home" or "progress"
+          currentView: "home", // "home" or "progress" or "updates" or "repositories"
+          tempRepositories: [],
           installLogs: [],
           installProgress: 0,
           installStatus: "",
@@ -228,13 +323,50 @@ const register = (core, args, options, metadata) => {
           setWaitingForConfirmation: (val) => (state) => ({ waitingForConfirmation: val }),
           setPendingQueue: (list) => (state) => ({ pendingQueue: list }),
 
-          closeProgress: () => (state) => ({
-            currentView: "home",
-            installLogs: [],
-            installProgress: 0,
-            installStatus: "Ready",
-            waitingForConfirmation: false,
-            pendingQueue: []
+          // Repository Actions
+          openRepoManager: () => (state) => ({
+            currentView: "repositories",
+            tempRepositories: Array.isArray(state.repositories) && state.repositories.length > 0
+              ? [...state.repositories]
+              : [""]
+          }),
+
+          addRepo: () => (state) => ({
+            tempRepositories: [...state.tempRepositories, ""]
+          }),
+
+          removeRepo: (idx) => (state) => {
+            const repos = [...state.tempRepositories];
+            repos.splice(idx, 1);
+            return { tempRepositories: repos };
+          },
+
+          updateRepo: ({ idx, value }) => (state) => {
+            const repos = [...state.tempRepositories];
+            repos[idx] = value;
+            return { tempRepositories: repos };
+          },
+
+          saveRepos: () => (state, actions) => {
+            const repos = state.tempRepositories
+              .map((url) => url.trim())
+              .filter((url) => url.length > 0);
+
+            if (repos.length === 0) {
+              core.make("osjs/dialog", "alert", {
+                title: "Validation Error",
+                message: "Please enter at least one repository URL.",
+              });
+              return;
+            }
+
+            actions.setRepositories(repos);
+            actions.fetchApps();
+            actions.setView("home");
+          },
+
+          setInstalledPackage: ({ name, version }) => (state) => ({
+            installedPackages: { ...state.installedPackages, [name]: version }
           }),
 
           refreshInstalled: () => (state) => {
@@ -247,6 +379,13 @@ const register = (core, args, options, metadata) => {
             });
             return { installedPackages };
           },
+
+          // ... fetchApps ...
+
+          // ... (keep fetchApps and showRepoManager same) ...
+
+          // ... inside proceedInstall ...
+
 
           fetchApps: () => async (state, actions) => {
             actions.setLoading(true);
@@ -300,158 +439,9 @@ const register = (core, args, options, metadata) => {
             }
           },
 
-          showRepoManager: () => (state, actions) => {
-            // ... (keep showRepoManager as is, assume logic is same)
-            // Wait, I must provide full content or I lose existing logic.
-            // I'll paste the existing logic for showRepoManager.
+          // Legacy showRepoManager removed
 
-            let win = core.make("osjs/window", {
-              id: "RepoManagerWindow",
-              title: "Manage Repositories",
-              dimension: { width: 520, height: 400 },
-              position: "center",
-              attributes: { minHeight: 300, minWidth: 400 },
-            });
 
-            win.render(($content, win) => {
-              $content.innerHTML = "";
-              const container = document.createElement("div");
-              container.style.height = "100%";
-              container.style.width = "100%";
-              $content.appendChild(container);
-
-              setTimeout(() => {
-                const initialRepos =
-                  Array.isArray(state.repositories) &&
-                    state.repositories.length > 0
-                    ? [...state.repositories]
-                    : [""];
-                app(
-                  {
-                    repos: initialRepos,
-                  },
-                  {
-                    setRepo: ({ idx, value }) => (state) => {
-                      const repos = [...state.repos];
-                      repos[idx] = value;
-                      return { repos };
-                    },
-                    addRepo: () => (state) => ({ repos: [...state.repos, ""] }),
-                    removeRepo: (idx) => (state) => {
-                      const repos = [...state.repos];
-                      repos.splice(idx, 1);
-                      return { repos };
-                    },
-                    save: () => (state) => {
-                      const repos = state.repos
-                        .map((url) => url.trim())
-                        .filter((url) => url.length > 0);
-                      if (repos.length === 0) {
-                        core.make("osjs/dialog", "alert", {
-                          title: "Validation Error",
-                          message: "Please enter at least one repository URL.",
-                        });
-                        return {};
-                      }
-                      actions.setRepositories(repos);
-                      actions.fetchApps();
-                      win.destroy();
-                      return {};
-                    },
-                    cancel: () => () => {
-                      win.destroy();
-                      return {};
-                    },
-                  },
-                  (state, actionsRepo) => // Renamed to actionsRepo to avoid confusion with outer actions
-                    h(
-                      Box,
-                      { style: { padding: 16, height: "100%" }, grow: 1 },
-                      [
-                        h(
-                          "div",
-                          { style: { marginBottom: 12, fontWeight: "bold" } },
-                          "Repository URLs:"
-                        ),
-                        ...state.repos.map((repo, idx) =>
-                          h(
-                            "div",
-                            {
-                              style: {
-                                display: "flex",
-                                alignItems: "center",
-                                padding: "5px",
-                                borderBottom: "1px solid #ddd",
-                                marginBottom: "5px"
-                              },
-                              key: idx
-                            },
-                            [
-                              h(TextField, {
-                                value: state.repos[idx],
-                                placeholder: "https://... (e.g. raw.githubusercontent.com/...)",
-                                oninput: (ev, value) => {
-                                  const safeValue = value !== undefined ? value : (ev.target ? ev.target.value : ev);
-                                  if (state.repos[idx] !== safeValue) {
-                                    actionsRepo.setRepo({ idx, value: safeValue });
-                                  }
-                                },
-                                box: { grow: 1 },
-                                style: { marginRight: "8px" }
-                              }),
-                              h(
-                                Button,
-                                {
-                                  onclick: () => actionsRepo.removeRepo(idx),
-                                  disabled: state.repos.length === 1,
-                                  title: "Remove this repository",
-                                  style: { margin: 0, height: "auto", minWidth: "30px" }
-                                },
-                                "✕"
-                              ),
-                            ]
-                          )
-                        ),
-                        h(
-                          Button,
-                          {
-                            onclick: actionsRepo.addRepo,
-                            style: { marginBottom: 16 },
-                          },
-                          "+ Add Repository"
-                        ),
-                        h(
-                          Box,
-                          {
-                            horizontal: true,
-                            style: {
-                              marginTop: 16,
-                              justifyContent: "flex-end",
-                            },
-                          },
-                          [
-                            h(
-                              Button,
-                              {
-                                onclick: actionsRepo.cancel,
-                                style: { marginRight: 8 },
-                              },
-                              "Cancel"
-                            ),
-                            h(
-                              Button,
-                              { onclick: actionsRepo.save, type: "primary" },
-                              "Save"
-                            ),
-                          ]
-                        ),
-                      ]
-                    ),
-                  container
-                );
-              }, 0);
-            });
-          },
 
           installApp:
             ({ pkg, core }) =>
@@ -511,6 +501,24 @@ const register = (core, args, options, metadata) => {
                 actions.updateProgress({ percent: 20, status: "Waiting for confirmation..." });
               },
 
+          updateAll:
+            ({ updates, core }) =>
+              async (state, actions) => {
+                actions.setView("progress");
+                actions.setWaitingForConfirmation(false);
+                actions.setPendingQueue([]);
+                actions.addLog(`Preparing to update ${updates.length} packages...`);
+                actions.updateProgress({ percent: 10, status: "Preparing updates..." });
+
+                // Add all updates to the queue
+                // Note: We skip dependency resolution check for now as we assume updates are safe/resolved
+                // or we could run resolution for each. For simplicity, we just queue them.
+
+                actions.setPendingQueue(updates);
+                actions.setWaitingForConfirmation(true);
+                actions.updateProgress({ percent: 20, status: `Ready to update ${updates.length} apps. Waiting for confirmation...` });
+              },
+
           proceedInstall:
             ({ core }) =>
               async (state, actions) => {
@@ -540,8 +548,38 @@ const register = (core, args, options, metadata) => {
 
                     const response = await fetch(downloadUrl);
                     if (!response.ok) throw new Error(`Failed to download ${p.name}`);
-                    const blob = await response.blob();
-                    const arrayBuffer = await blob.arrayBuffer();
+
+                    const contentLength = response.headers.get('content-length');
+                    const totalLength = contentLength ? parseInt(contentLength, 10) : null;
+
+                    let arrayBuffer;
+
+                    if (totalLength && response.body) {
+                      const reader = response.body.getReader();
+                      const chunks = [];
+                      let receivedLength = 0;
+
+                      const stepSize = 40 / total; // Max percentage gain for this download step
+
+                      while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        chunks.push(value);
+                        receivedLength += value.length;
+
+                        const percent = (receivedLength / totalLength) * 100;
+                        const overallProgress = currentStepBase + ((percent / 100) * stepSize);
+
+                        progress(overallProgress, `Downloading ${p.name} (${Math.round(percent)}%)...`);
+                      }
+
+                      const blob = new Blob(chunks);
+                      arrayBuffer = await blob.arrayBuffer();
+                    } else {
+                      const blob = await response.blob();
+                      arrayBuffer = await blob.arrayBuffer();
+                    }
 
                     // Save to VFS
                     const filename = `${p.name}-${p.version}.wpk`;
@@ -569,12 +607,12 @@ const register = (core, args, options, metadata) => {
 
                     // Refresh Local State
                     actions.setInstalling({ name: p.name, value: false });
+                    actions.setInstalledPackage({ name: p.name, version: p.version });
                   }
 
                   // Done
                   progress(100, "Installation Complete!");
                   log("All operations completed successfully.");
-                  actions.refreshInstalled();
                   core.make("osjs/notification", { title: "Store", message: `Package installed successfully.` });
 
                 } catch (e) {
