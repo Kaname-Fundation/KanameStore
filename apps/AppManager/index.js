@@ -16,6 +16,7 @@ const createView = (core) => (state, actions) => {
 
   return h(Box, {}, [
     h(Toolbar, {}, [
+
       h(
         Button,
         {
@@ -27,6 +28,7 @@ const createView = (core) => (state, actions) => {
         placeholder: "Search packages...",
         oninput: (ev, value) => actions.setSearch(value),
         value: state.search,
+        box: { grow: 1 },
       }),
     ]),
     h(Box, { grow: 1, shrink: 1, style: { overflow: "auto" } }, [
@@ -69,7 +71,7 @@ const createView = (core) => (state, actions) => {
                 : null,
               h("div", { style: { flex: 1 } }, [
                 h("span", { style: { fontWeight: "bold" } }, pkg.name),
-
+                h("div", { style: { fontSize: "0.8em", color: "#666" } }, `v${pkg.version || "0.0.0"}`),
               ]),
               h(
                 Button,
@@ -115,6 +117,100 @@ const register = (core, args, options, metadata) => {
   const winIcon = icon(metadata.icon);
 
 
+
+  const uninstallApp = (name, reloadCallback) => {
+    proc
+      .createWindow({
+        id: "AppUninstallDialog",
+        title: "Uninstall Package",
+        icon: winIcon,
+        dimension: { width: 350, height: 200 },
+        position: "center",
+        attributes: {
+          modal: true,
+          resizable: false,
+          minimizable: false,
+          maximizable: false
+        },
+      })
+      .on("destroy", () => {
+        // No special cleanup needed
+      })
+      .render(($content, win) => {
+        app(
+          {
+            status: "confirm", // confirm, processing, success, error
+            error: null
+          },
+          {
+            setStatus: (status) => (state) => ({ status }),
+            setError: (error) => (state) => ({ status: "error", error }),
+
+            close: () => (state) => {
+              win.destroy();
+            },
+
+            confirm: () => (state, actions) => {
+              actions.setStatus("processing");
+
+              core.request("/packages/uninstall", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name }),
+              })
+                .then((res) => res.json())
+                .then((result) => {
+                  if (result.success) {
+                    actions.setStatus("success");
+                    if (reloadCallback) reloadCallback();
+                  } else {
+                    actions.setError(result.error);
+                  }
+                })
+                .catch((err) => {
+                  actions.setError(err.message);
+                });
+            }
+          },
+          (state, actions) => {
+            if (state.status === "confirm") {
+              return h(Box, { grow: 1, padding: true, align: "center", justify: "center" }, [
+                h("div", { style: { fontWeight: "bold", marginBottom: "10px" } }, `Uninstall ${name}?`),
+                h("div", { style: { marginBottom: "20px", textAlign: "center" } }, "Are you sure you want to remove this package?"),
+                h("div", { style: { display: "flex", gap: "10px" } }, [
+                  h(Button, { onclick: actions.close }, "Cancel"),
+                  h(Button, { onclick: actions.confirm, type: "primary" }, "Uninstall")
+                ])
+              ]);
+            }
+
+            if (state.status === "processing") {
+              return h(Box, { grow: 1, padding: true, align: "center", justify: "center" }, [
+                h("div", { style: { fontWeight: "bold" } }, "Uninstalling..."),
+                h("div", {}, "Please wait...")
+              ]);
+            }
+
+            if (state.status === "success") {
+              return h(Box, { grow: 1, padding: true, align: "center", justify: "center" }, [
+                h("div", { style: { fontWeight: "bold", fontSize: "1.2em", color: "green", marginBottom: "10px" } }, "Success"),
+                h("div", { style: { marginBottom: "20px" } }, `Uninstalled ${name} successfully.`),
+                h(Button, { onclick: actions.close, type: "primary" }, "Close")
+              ]);
+            }
+
+            if (state.status === "error") {
+              return h(Box, { grow: 1, padding: true, align: "center", justify: "center" }, [
+                h("div", { style: { fontWeight: "bold", fontSize: "1.2em", color: "red", marginBottom: "10px" } }, "Error"),
+                h("div", { style: { marginBottom: "20px", textAlign: "center" } }, state.error || "Unknown Error"),
+                h(Button, { onclick: actions.close }, "Close")
+              ]);
+            }
+          },
+          $content
+        );
+      });
+  };
 
   const installFromVfs = (vfsPath, reloadCallback) => {
     // 1. Inspect (Unprotected)
@@ -345,6 +441,11 @@ const register = (core, args, options, metadata) => {
           setPackages: (packages) => (state) => ({ packages }),
           setSearch: (search) => (state) => ({ search }),
           setAutostartList: (list) => (state) => ({ autostartList: list }),
+
+          uninstall: (name) => (state, actions) => {
+            uninstallApp(name, () => actions.loadPackages());
+          },
+
           loadPackages: () => (state, actions) => {
             const settings = core.make("osjs/settings");
             const whitelist = settings.get("osjs/packages", "autostart", [
@@ -471,54 +572,6 @@ const register = (core, args, options, metadata) => {
                   () => { }
                 );
               });
-          },
-          uninstall: (name) => (state, actions) => {
-            core.make(
-              "osjs/dialog",
-              "confirm",
-              {
-                title: "Uninstall",
-                message: `Are you sure you want to uninstall ${name}?`,
-              },
-              (btn) => {
-                if (btn === "yes") {
-                  core.request("/packages/uninstall", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ name }),
-                  })
-                    .then((res) => res.json())
-                    .then((result) => {
-                      if (result.success) {
-                        core.make(
-                          "osjs/dialog",
-                          "alert",
-                          { title: "Success", message: `Uninstalled ${name}` },
-                          () => { }
-                        );
-                        actions.loadPackages();
-                      } else {
-                        core.make(
-                          "osjs/dialog",
-                          "alert",
-                          { title: "Error", message: result.error },
-                          () => { }
-                        );
-                      }
-                    })
-                    .catch((err) => {
-                      core.make(
-                        "osjs/dialog",
-                        "alert",
-                        { title: "Error", message: err.message },
-                        () => { }
-                      );
-                    });
-                }
-              }
-            );
           },
         },
         createView(core),
