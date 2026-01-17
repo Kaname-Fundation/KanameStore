@@ -28,8 +28,8 @@ module.exports = {
             patterns: [
                 { from: "icon.png" },
                 { from: "html5-wolfenstein3D", to: "html5-wolfenstein3D" },
-                { from: "game.html" },
-                { from: "load_fixed.js" }
+                { from: "game.html", to: "html5-wolfenstein3D/game.html" },
+                { from: "load_fixed.js", to: "html5-wolfenstein3D/load_fixed.js" }
             ]
         }),
     ],

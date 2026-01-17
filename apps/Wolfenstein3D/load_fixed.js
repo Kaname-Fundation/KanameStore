@@ -1,10 +1,6 @@
-
 (function ($) {
 
     // these files are preloaded while the title screen is showing
-    // Paths updated to point to html5-wolfenstein3D/ folder
-    var prefix = "html5-wolfenstein3D/";
-
     var files = [
         // "js/wolf.js", // Loaded manually first
         "js/random.js",
@@ -36,7 +32,7 @@
         "preload!art/menuitems.png",
         "preload!art/menuselector.png"
 
-    ].map(function (f) { return prefix + f; });
+    ];
 
     // these files are preloaded in the background after the menu is displayed.
     // only non-essential files here
@@ -54,12 +50,7 @@
         "preload!art/control_keys.png",
         "preload!art/confirm_newgame.png",
         "preload!art/paused.png"
-    ].map(function (f) {
-        if (f.indexOf('preload!') === 0) {
-            return "preload!" + prefix + f.substring(8);
-        }
-        return prefix + f;
-    });
+    ];
 
     $(document).ready(function () {
 
@@ -85,12 +76,12 @@
         Modernizr.load([
             {
                 test: window.requestAnimationFrame,
-                nope: prefix + "js/requestAnimFrame.js"
+                nope: "js/requestAnimFrame.js"
             }, {
                 test: window.atob && window.btoa,
-                nope: prefix + "js/base64.js"
+                nope: "js/base64.js"
             }, {
-                load: prefix + "js/wolf.js", // EXECUTE FIRST
+                load: "js/wolf.js", // EXECUTE FIRST
                 complete: function () {
                     Modernizr.load({
                         load: files,
