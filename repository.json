@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-17T08:55:49.094Z",
+  "generatedAt": "2026-01-17T09:06:28.188Z",
   "apps": [
     {
       "name": "FileManager",
@@ -243,6 +243,17 @@
       "category": "games",
       "download": "wolfenstein3d-application-1.1.7.wpk",
       "icon": "icons/wolfenstein3d-application.png",
+      "iconName": "icon.png",
+      "dependencies": []
+    },
+    {
+      "name": "WBWWB",
+      "title": "We Become What We Behold",
+      "version": "1.1.1",
+      "description": "We Become What We Behold Port",
+      "category": "games",
+      "download": "wbwwb-application-1.1.1.wpk",
+      "icon": "icons/wbwwb-application.png",
       "iconName": "icon.png",
       "dependencies": []
     }
