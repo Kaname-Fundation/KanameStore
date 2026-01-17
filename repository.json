@@ -1,16 +1,6 @@
 {
-  "generatedAt": "2026-01-17T09:35:59.751Z",
+  "generatedAt": "2026-01-17T14:53:31.557Z",
   "apps": [
-    {
-      "name": "FileManager",
-      "title": "File Manager",
-      "version": "2.0.0",
-      "category": "utilities",
-      "download": "filemanager-2.0.0.wpk",
-      "icon": null,
-      "iconName": "system-file-manager",
-      "dependencies": []
-    },
     {
       "name": "GnomeIcons",
       "title": "Gnome Icons",
@@ -255,6 +245,16 @@
       "download": "store-1.3.4.wpk",
       "icon": null,
       "iconName": "system-software-install",
+      "dependencies": []
+    },
+    {
+      "name": "FileManager",
+      "title": "File Manager",
+      "version": "2.0.1",
+      "category": "utilities",
+      "download": "filemanager-2.0.1.wpk",
+      "icon": null,
+      "iconName": "system-file-manager",
       "dependencies": []
     }
   ]
