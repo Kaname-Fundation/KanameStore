@@ -28,7 +28,7 @@ const createView = (core, proc) => (state, actions) => {
       h("div", { style: { marginTop: "10px", textAlign: "right" } },
         state.waitingForConfirmation ? [
           h("span", { style: { marginRight: "10px", fontWeight: "bold" } }, "Proceed with installation?"),
-          h(Button, { onclick: actions.closeProgress, style: { marginRight: "10px" } }, "Cancel"),
+          h(Button, { onclick: actions.closeProgress }, "Cancel"),
           h(Button, { onclick: () => actions.proceedInstall({ core }), type: "primary" }, "Confirm & Install")
         ] : [
           h(Button, {
