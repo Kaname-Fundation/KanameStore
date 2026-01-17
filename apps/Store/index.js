@@ -575,7 +575,7 @@ const register = (core, args, options, metadata) => {
                   progress(100, "Installation Complete!");
                   log("All operations completed successfully.");
                   actions.refreshInstalled();
-                  core.make("osjs/notification", { title: "Success", message: `Installed successfully.` });
+                  core.make("osjs/notification", { title: "Store", message: `Package installed successfully.` });
 
                 } catch (e) {
                   console.error(e);
