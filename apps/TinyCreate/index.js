@@ -16,7 +16,7 @@ OSjs.make("osjs/packages").register(applicationName, (core, args, options, metad
         id: "TinyCrate",
         title: metadata.title.en_EN,
         icon: proc.resource(metadata.icon),
-        dimension: { width: 800, height: 600 },
+        dimension: { width: 960, height: 540 },
         position: "center",
         attributes: {
             drawer: true,
