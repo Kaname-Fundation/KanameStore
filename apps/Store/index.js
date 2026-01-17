@@ -320,6 +320,7 @@ const register = (core, args, options, metadata) => {
             installProgress: percent,
             installStatus: status || state.installStatus
           }),
+          closeProgress: () => (state) => ({ currentView: "home" }),
           setWaitingForConfirmation: (val) => (state) => ({ waitingForConfirmation: val }),
           setPendingQueue: (list) => (state) => ({ pendingQueue: list }),
 
@@ -590,7 +591,36 @@ const register = (core, args, options, metadata) => {
                     formData.append("path", destPath);
 
                     log(`Writing ${filename} to VFS...`);
-                    await core.request("/vfs/writefile", { method: "POST", body: formData });
+
+                    // Use XHR for upload progress
+                    await new Promise((resolve, reject) => {
+                      const xhr = new XMLHttpRequest();
+                      xhr.open("POST", "/vfs/writefile");
+
+                      xhr.upload.onprogress = (event) => {
+                        if (event.lengthComputable) {
+                          const percent = (event.loaded / event.total) * 100;
+                          // Scale progress between currentStepBase and (currentStepBase + stepSize/2)
+                          // We give half the step to upload, half to install extraction
+                          const uploadStepSize = (40 / total) / 2;
+                          const currentProgress = currentStepBase + ((percent / 100) * uploadStepSize);
+
+                          progress(currentProgress, `Writing to VFS (${Math.round(percent)}%)...`);
+                        }
+                      };
+
+                      xhr.onload = () => {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                          resolve(xhr.response);
+                        } else {
+                          reject(new Error(`Upload failed: ${xhr.statusText}`));
+                        }
+                      };
+
+                      xhr.onerror = () => reject(new Error("Upload failed"));
+
+                      xhr.send(formData);
+                    });
 
                     // Install Silently
                     progress(currentStepBase + (40 / total), `Installing ${p.name}...`);
