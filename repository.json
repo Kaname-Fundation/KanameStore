@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-17T15:21:40.783Z",
+  "generatedAt": "2026-01-17T16:00:00.756Z",
   "apps": [
     {
       "name": "GnomeIcons",
@@ -236,23 +236,23 @@
       "dependencies": []
     },
     {
-      "name": "store",
-      "title": "App Store",
-      "version": "1.3.5",
-      "description": "App Store for KanameOS",
-      "category": "system",
-      "download": "store-1.3.5.wpk",
-      "icon": null,
-      "iconName": "system-software-install",
-      "dependencies": []
-    },
-    {
       "name": "appmanager",
       "title": "App Manager",
       "version": "1.1.5",
       "description": "Application Manager for KanameOS",
       "category": "system",
       "download": "app-manager-1.1.5.wpk",
+      "icon": null,
+      "iconName": "system-software-install",
+      "dependencies": []
+    },
+    {
+      "name": "store",
+      "title": "App Store",
+      "version": "1.4.0",
+      "description": "App Store for KanameOS",
+      "category": "system",
+      "download": "store-1.4.0.wpk",
       "icon": null,
       "iconName": "system-software-install",
       "dependencies": []
