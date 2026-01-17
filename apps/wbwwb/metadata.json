@@ -1,0 +1,16 @@
+{
+    "name": "WBWWB",
+    "category": "games",
+    "version": "1.1.1",
+    "icon": "icon.png",
+    "author": "KanameFundation",
+    "title": {
+        "en_EN": "We Become What We Behold"
+    },
+    "description": {
+        "en_EN": "We Become What We Behold Game Port"
+    },
+    "files": [
+        "main.js"
+    ]
+}
