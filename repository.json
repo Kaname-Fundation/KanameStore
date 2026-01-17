@@ -1,17 +1,6 @@
 {
-  "generatedAt": "2026-01-17T07:41:48.587Z",
+  "generatedAt": "2026-01-17T07:53:41.713Z",
   "apps": [
-    {
-      "name": "AceEditor",
-      "title": "Ace Editor",
-      "version": "1.2.7",
-      "description": "KanameOS Ace Editor Application",
-      "category": "development",
-      "download": "ace-application-1.2.7.wpk",
-      "icon": "icons/ace-application.png",
-      "iconName": "icon.png",
-      "dependencies": []
-    },
     {
       "name": "FileManager",
       "title": "File Manager",
@@ -107,17 +96,6 @@
       "download": "terminal-1.1.1.wpk",
       "icon": null,
       "iconName": "utilities-terminal",
-      "dependencies": []
-    },
-    {
-      "name": "TextPad",
-      "title": "TextPad",
-      "version": "1.2.7",
-      "description": "KanameOS Textpad Application",
-      "category": "utilities",
-      "download": "textpad-application-1.2.7.wpk",
-      "icon": "icons/textpad-application.png",
-      "iconName": "icon.png",
       "dependencies": []
     },
     {
@@ -232,6 +210,28 @@
       "category": "games",
       "download": "wolfenstein3d-application-1.1.6.wpk",
       "icon": "icons/wolfenstein3d-application.png",
+      "iconName": "icon.png",
+      "dependencies": []
+    },
+    {
+      "name": "AceEditor",
+      "title": "Ace Editor",
+      "version": "1.2.7",
+      "description": "KanameOS Ace Editor Application",
+      "category": "development",
+      "download": "ace-application-1.2.7.wpk",
+      "icon": "icons/ace-application.png",
+      "iconName": "icon.png",
+      "dependencies": []
+    },
+    {
+      "name": "TextPad",
+      "title": "TextPad",
+      "version": "1.2.7",
+      "description": "KanameOS Textpad Application",
+      "category": "utilities",
+      "download": "textpad-application-1.2.7.wpk",
+      "icon": "icons/textpad-application.png",
       "iconName": "icon.png",
       "dependencies": []
     }
