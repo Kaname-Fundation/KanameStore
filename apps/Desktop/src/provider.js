@@ -76,11 +76,11 @@ export default class DesktopServiceProvider extends ServiceProvider {
 
     this.core.singleton('osjs/desktop', () => this.createDesktopContract());
 
-    const applySettings = () => this.desktop.applySettings()
-      .then(() => {
-        this.ready = true;
-      })
-      .catch(error => console.error(error));
+    this.core.on('osjs/desktop:ready', () => {
+      this.ready = true;
+    });
+
+    const applySettings = () => this.desktop.applySettings();
 
     if (this.core.started) {
       applySettings();
