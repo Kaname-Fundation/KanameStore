@@ -194,7 +194,9 @@ const tabSections = [
         defaultValue: "system",
         choices: () => ({
           system: "System",
-          invert: "Inverted background color",
+          light: "Light",
+          dark: "Dark",
+          invert: "Auto (Wallpaper Based)",
           custom: "Custom color",
         }),
       },
@@ -322,10 +324,10 @@ const renderUsersTab = (state, actions) => {
               h("span", {}, `${user.username} (${user.groups.join(", ")})`),
               user.username !== "admin"
                 ? h(
-                    Button,
-                    { onclick: () => actions.deleteUser(user.username) },
-                    "Delete"
-                  )
+                  Button,
+                  { onclick: () => actions.deleteUser(user.username) },
+                  "Delete"
+                )
                 : null,
             ]
           )
@@ -475,8 +477,8 @@ const renderWindow = (core, proc) => ($content, win) => {
 
     update:
       ({ path, value }) =>
-      (state) =>
-        resolveNewSetting(state)(path, value),
+        (state) =>
+          resolveNewSetting(state)(path, value),
     refresh: () => () => ({ settings: getSettings() }),
     setLoading: (loading) => ({ loading }),
 

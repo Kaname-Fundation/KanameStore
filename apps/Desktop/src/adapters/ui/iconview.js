@@ -27,18 +27,18 @@
  * @author  Anders Evenrud <andersevenrud@gmail.com>
  * @license Simplified BSD License
  */
-import {EventEmitter} from '@osjs/event-emitter';
-import {h, app} from 'hyperapp';
-import {doubleTap} from '../../utils/input';
-import {pathJoin} from '../../utils/vfs';
-import {invertHex} from '../../utils/colors';
-import {isDroppingImage, validVfsDrop} from '../../utils/desktop';
+import { EventEmitter } from '@osjs/event-emitter';
+import { h, app } from 'hyperapp';
+import { doubleTap } from '../../utils/input';
+import { pathJoin } from '../../utils/vfs';
+import { invertHex } from '../../utils/colors';
+import { isDroppingImage, validVfsDrop } from '../../utils/desktop';
 
 const tapper = doubleTap();
 
 const onDropAction = actions => (ev, data, files, shortcut = true) => {
   if (validVfsDrop(data)) {
-    actions.addEntry({entry: data, shortcut});
+    actions.addEntry({ entry: data, shortcut });
   } else if (files.length > 0) {
     actions.uploadEntries(files);
   }
@@ -48,7 +48,7 @@ const createLabelComputer = (core) => {
   const packages = f => core.make('osjs/packages').getPackages(f)[0];
   const translate = n => core.make('osjs/locale').translatableFlat(n);
 
-  return ({filename, mime, label}) => {
+  return ({ filename, mime, label }) => {
     const metadata = (mime === 'osjs/application' ? packages(pkg => (pkg.name === filename)) : null);
     return label || (metadata ? translate(metadata.title) : filename);
   };
@@ -62,12 +62,12 @@ const view = (computeLabel, fileIcon, themeIcon, droppable) => (state, actions) 
     class: 'osjs-desktop-iconview__wrapper',
     oncontextmenu: ev => {
       if (isRootElement(ev)) {
-        actions.openContextMenu({ev});
+        actions.openContextMenu({ ev });
       }
     },
     onclick: ev => {
       if (isRootElement(ev)) {
-        actions.selectEntry({index: -1});
+        actions.selectEntry({ index: -1 });
       }
     },
     oncreate: el => {
@@ -76,7 +76,7 @@ const view = (computeLabel, fileIcon, themeIcon, droppable) => (state, actions) 
           const droppedImage = isDroppingImage(data);
 
           if (droppedImage || (ev.shiftKey && validVfsDrop(data))) {
-            actions.openDropContextMenu({ev, data, files});
+            actions.openDropContextMenu({ ev, data, files });
           } else {
             onDropAction(actions)(ev, data, files);
           }
@@ -90,10 +90,10 @@ const view = (computeLabel, fileIcon, themeIcon, droppable) => (state, actions) 
           ? ' osjs-desktop-iconview__entry--selected'
           : ''
       ),
-      oncontextmenu: ev => actions.openContextMenu({ev, entry, index}),
-      ontouchstart: ev => tapper(ev, () => actions.openEntry({ev, entry, index})),
-      ondblclick: ev => actions.openEntry({ev, entry, index}),
-      onclick: ev => actions.selectEntry({ev, entry, index})
+      oncontextmenu: ev => actions.openContextMenu({ ev, entry, index }),
+      ontouchstart: ev => tapper(ev, () => actions.openEntry({ ev, entry, index })),
+      ondblclick: ev => actions.openEntry({ ev, entry, index }),
+      onclick: ev => actions.selectEntry({ ev, entry, index })
     }, [
       h('div', {
         class: 'osjs-desktop-iconview__entry__inner'
@@ -147,7 +147,7 @@ const createShortcuts = (root, readfile, writefile) => {
     })
     .then(write);
 
-  return {read, add, remove};
+  return { read, add, remove };
 };
 
 const readDesktopFolder = (root, readdir, shortcuts) => {
@@ -156,11 +156,11 @@ const readDesktopFolder = (root, readdir, shortcuts) => {
   const read = () => readdir(root, {
     showHiddenFiles: false
   })
-    .then(files => files.map(s => ({shortcut: false, ...s})))
+    .then(files => files.map(s => ({ shortcut: false, ...s })))
     .catch(supressError);
 
   const readShortcuts = () => shortcuts.read()
-    .then(shortcuts => shortcuts.map((s, index) => ({shortcut: index, ...s})))
+    .then(shortcuts => shortcuts.map((s, index) => ({ shortcut: index, ...s })))
     .catch(supressError);
 
   return () => {
@@ -225,10 +225,10 @@ export class DesktopIconView extends EventEmitter {
     this.$root.className = 'osjs-desktop-iconview';
     this.core.$contents.appendChild(this.$root);
 
-    const {droppable} = this.core.make('osjs/dnd');
-    const {icon: fileIcon} = this.core.make('osjs/fs');
-    const {icon: themeIcon} = this.core.make('osjs/theme');
-    const {copy, readdir, readfile, writefile, unlink, mkdir} = this.core.make('osjs/vfs');
+    const { droppable } = this.core.make('osjs/dnd');
+    const { icon: fileIcon } = this.core.make('osjs/fs');
+    const { icon: themeIcon } = this.core.make('osjs/theme');
+    const { copy, readdir, readfile, writefile, unlink, mkdir } = this.core.make('osjs/vfs');
     const error = err => console.error(err);
     const shortcuts = createShortcuts(root, readfile, writefile);
     const read = readDesktopFolder(root, readdir, shortcuts);
@@ -238,25 +238,25 @@ export class DesktopIconView extends EventEmitter {
       selected: -1,
       entries: []
     }, {
-      setEntries: entries => ({entries}),
+      setEntries: entries => ({ entries }),
 
-      openDropContextMenu: ({ev, data, files, droppedImage}) => {
+      openDropContextMenu: ({ ev, data, files, droppedImage }) => {
         this.createDropContextMenu(ev, data, files, droppedImage);
       },
 
-      openContextMenu: ({ev, entry, index}) => {
+      openContextMenu: ({ ev, entry, index }) => {
         if (entry) {
           this.createFileContextMenu(ev, entry);
 
-          return {selected: index};
+          return { selected: index };
         } else {
           this.createRootContextMenu(ev);
 
-          return {selected: -1};
+          return { selected: -1 };
         }
       },
 
-      openEntry: ({entry, forceDialog}) => {
+      openEntry: ({ entry, forceDialog }) => {
         if (entry.isDirectory) {
           this.core.run('FileManager', {
             path: entry
@@ -270,16 +270,16 @@ export class DesktopIconView extends EventEmitter {
           });
         }
 
-        return {selected: -1};
+        return { selected: -1 };
       },
 
-      selectEntry: ({index}) => ({selected: index}),
+      selectEntry: ({ index }) => ({ selected: index }),
 
       uploadEntries: files => {
         // TODO
       },
 
-      addEntry: ({entry, shortcut}) => (state, actions) => {
+      addEntry: ({ entry, shortcut }) => (state, actions) => {
         const dest = `${root}/${entry.filename}`;
 
         mkdir(root)
@@ -295,7 +295,7 @@ export class DesktopIconView extends EventEmitter {
           })
           .then(() => actions.reload(true));
 
-        return {selected: -1};
+        return { selected: -1 };
       },
 
       removeEntry: entry => (state, actions) => {
@@ -309,7 +309,7 @@ export class DesktopIconView extends EventEmitter {
             .catch(error);
         }
 
-        return {selected: -1};
+        return { selected: -1 };
       },
 
       reload: (fromUI) => (state, actions) => {
@@ -328,7 +328,10 @@ export class DesktopIconView extends EventEmitter {
     this.iconview.reload();
     this._createWatcher();
 
-    this.core.on('osjs/settings:save', () => this.iconview.reload());
+    this.core.on('osjs/settings:save', () => {
+      this.applySettings();
+      this.iconview.reload();
+    });
   }
 
   createFileContextMenu(ev, entry) {
@@ -338,10 +341,10 @@ export class DesktopIconView extends EventEmitter {
       position: ev,
       menu: [{
         label: _('LBL_OPEN'),
-        onclick: () => this.iconview.openEntry({entry, forceDialog: false})
+        onclick: () => this.iconview.openEntry({ entry, forceDialog: false })
       }, {
         label: _('LBL_OPEN_WITH'),
-        onclick: () => this.iconview.openEntry({entry, forceDialog: true})
+        onclick: () => this.iconview.openEntry({ entry, forceDialog: true })
       }, {
         label: entry.shortcut !== false ? _('LBL_REMOVE_SHORTCUT') : _('LBL_DELETE'),
         onclick: () => this.iconview.removeEntry(entry)
@@ -410,6 +413,8 @@ export class DesktopIconView extends EventEmitter {
     const styles = {
       system: 'inherit',
       invert: invertHex(backgroundColor),
+      light: '#ffffff',
+      dark: '#000000',
       custom: fontColor
     };
 
