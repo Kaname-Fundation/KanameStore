@@ -34,6 +34,7 @@ import 'brace/mode/javascript';
 import 'brace/mode/python';
 import 'brace/mode/css';
 import 'brace/mode/html';
+import 'brace/mode/json';
 import 'brace/ext/modelist';
 import 'brace/ext/themelist';
 import { h, app } from 'hyperapp';
