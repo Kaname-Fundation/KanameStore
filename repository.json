@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-18T15:18:06.490Z",
+  "generatedAt": "2026-01-19T12:08:11.306Z",
   "apps": [
     {
       "name": "GnomeIcons",
@@ -138,17 +138,6 @@
       ]
     },
     {
-      "name": "AceEditor",
-      "title": "Ace Editor",
-      "version": "1.2.7",
-      "description": "KanameOS Ace Editor Application",
-      "category": "development",
-      "download": "ace-application-1.2.7.wpk",
-      "icon": "icons/ace-application.png",
-      "iconName": "icon.png",
-      "dependencies": []
-    },
-    {
       "name": "TextPad",
       "title": "TextPad",
       "version": "1.2.7",
@@ -255,6 +244,17 @@
       "download": "settings-application-1.1.0.wpk",
       "icon": null,
       "iconName": "preferences-system",
+      "dependencies": []
+    },
+    {
+      "name": "AceEditor",
+      "title": "Ace Editor",
+      "version": "1.3.0",
+      "description": "KanameOS Ace Editor Application",
+      "category": "development",
+      "download": "ace-application-1.3.0.wpk",
+      "icon": "icons/ace-application.png",
+      "iconName": "icon.png",
       "dependencies": []
     }
   ]
